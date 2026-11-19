@@ -1,6 +1,6 @@
 # Mise en ligne sur un VPS IONOS (Ubuntu)
 
-Remplacez `VOTRE-DOMAINE.fr` par votre nom de domaine et `IP_DU_SERVEUR` par l'IP du VPS.
+Domaine : `aptoiture.eu`. Remplacez `IP_DU_SERVEUR` par l'IP du VPS (visible dans l'espace client IONOS).
 
 ## 1. DNS (espace client IONOS → Domaines → DNS)
 - Enregistrement **A** : `@` → `IP_DU_SERVEUR`
@@ -40,7 +40,7 @@ pm2 save && pm2 startup
 cat > /etc/nginx/sites-available/ap-toiture <<'EOF'
 server {
     listen 80;
-    server_name VOTRE-DOMAINE.fr www.VOTRE-DOMAINE.fr;
+    server_name aptoiture.eu www.aptoiture.eu;
     client_max_body_size 25M;
     location / {
         proxy_pass http://127.0.0.1:3000;
@@ -57,7 +57,7 @@ nginx -t && systemctl reload nginx
 
 ## 6. HTTPS gratuit
 ```bash
-certbot --nginx -d VOTRE-DOMAINE.fr -d www.VOTRE-DOMAINE.fr
+certbot --nginx -d aptoiture.eu -d www.aptoiture.eu
 ```
 
 ## 7. Mises à jour et sauvegarde
