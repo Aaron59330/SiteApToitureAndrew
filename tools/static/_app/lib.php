@@ -56,7 +56,7 @@ function is_admin() {
   if (count($p) !== 3 || $p[0] !== 'admin' || (int)$p[1] < time()) return false;
   return hash_equals(sign($p[0] . '.' . $p[1]), $p[2]);
 }
-function admin_account() { return read_json('admin', null); }
+function admin_account() { return read_json('admin', null) ?: (defined('ADMIN_DEFAULT') ? ADMIN_DEFAULT : null); }
 function verify_login($email, $pw) {
   $a = admin_account();
   $okMail = $a && hash_equals(strtolower(trim($a['email'])), strtolower(trim((string)$email)));

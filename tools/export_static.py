@@ -34,7 +34,9 @@ shutil.copy(os.path.join(ST,'uploads.htaccess'),os.path.join(DST,'uploads','.hta
 kf=os.path.join(ROOT,'tools','.setup_key')
 key=open(kf).read().strip() if os.path.exists(kf) else secrets.token_hex(4).upper()
 open(kf,'w').write(key)
+hf=os.path.join(ROOT,'tools','.admin_hash'); ahash=open(hf).read().strip()
 open(os.path.join(DST,'_app','config.php'),'w').write(f"""<?php
+define('ADMIN_DEFAULT', ['email' => 'apcouvreur@gmail.com', 'hash' => '{ahash}']);
 define('SETUP_KEY', '{key}');
 define('SITE_URL', 'https://aptoiture.eu');
 define('MAIL_TO', 'apcouvreur@gmail.com');

@@ -3,3 +3,5 @@ data/
 .env
 dist/
 tools/.setup_key
+tools/.admin_hash
+aptoiture-site.zip
