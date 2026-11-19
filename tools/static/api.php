@@ -56,31 +56,30 @@ switch ($a) {
     });
     jout(['ok' => true]);
 
-  case 'real_add':
-    if (empty($_FILES['files']['tmp_name'])) jout(['error' => 'Aucune image valide reçue.'], 400);
-    $tmps = (array)$_FILES['files']['tmp_name']; $added = [];
-    foreach ($tmps as $t) { if (!$t) continue; $u = save_image($t); if ($u) $added[] = ['id' => new_id(), 'file' => $u, 'title' => clip($_POST['title'] ?? '', 120), 'description' => clip($_POST['description'] ?? '', 2000), 'created' => date('c')]; }
-    if (!$added) jout(['error' => 'Images illisibles.'], 400);
-    update_json('realisations', [], function (&$l) use ($added) { $l = array_merge(array_reverse($added), $l); });
-    jout(['ok' => true, 'count' => count($added)]);
-
-  case 'real_edit':
-    $found = false;
-    update_json('realisations', [], function (&$l) use ($in, &$found) {
-      foreach ($l as &$it) if ($it['id'] === ($_GET['id'] ?? '')) {
-        $found = true;
-        if (array_key_exists('title', $in)) $it['title'] = trim(clip($in['title'], 120));
-        if (array_key_exists('description', $in)) $it['description'] = trim(clip($in['description'], 2000));
+  case 'proj_save':
+    $photos = array_values(array_filter((array)($in['photos'] ?? []), fn($u) => is_string($u) && preg_match('#^/uploads/[\w.\-]+$#', $u)));
+    $title = trim(clip($in['title'] ?? '', 140));
+    if ($title === '' || !$photos) jout(['error' => 'Un titre et au moins une photo sont nécessaires.'], 422);
+    $id = (string)($in['id'] ?? ''); $removed = [];
+    update_json('realisations', [], function (&$l) use (&$id, $in, $title, $photos, &$removed) {
+      $l = projects_norm($l); $found = false;
+      foreach ($l as &$p) if ($id !== '' && $p['id'] === $id) {
+        $found = true; $removed = array_diff($p['photos'], $photos);
+        $p['title'] = $title; $p['category'] = trim(clip($in['category'] ?? '', 60)); $p['description'] = trim(clip($in['description'] ?? '', 5000)); $p['photos'] = $photos;
       }
+      unset($p);
+      if (!$found) { $id = new_id(); array_unshift($l, ['id' => $id, 'title' => $title, 'category' => trim(clip($in['category'] ?? '', 60)), 'description' => trim(clip($in['description'] ?? '', 5000)), 'photos' => $photos, 'created' => date('c')]); }
     });
-    $found ? jout(['ok' => true]) : jout(['error' => 'Introuvable'], 404);
+    foreach ($removed as $u) @unlink(UPLOADS . '/' . basename($u));
+    jout(['ok' => true, 'id' => $id]);
 
-  case 'real_del':
-    $file = null;
-    update_json('realisations', [], function (&$l) use (&$file) {
-      $l = array_values(array_filter($l, function ($it) use (&$file) { if ($it['id'] === ($_GET['id'] ?? '')) { $file = $it['file']; return false; } return true; }));
+  case 'proj_del':
+    $files = [];
+    update_json('realisations', [], function (&$l) use (&$files) {
+      $l = projects_norm($l);
+      $l = array_values(array_filter($l, function ($p) use (&$files) { if ($p['id'] === ($_GET['id'] ?? '')) { $files = $p['photos']; return false; } return true; }));
     });
-    if ($file) @unlink(UPLOADS . '/' . basename($file));
+    foreach ($files as $u) @unlink(UPLOADS . '/' . basename($u));
     jout(['ok' => true]);
 
   case 'real_move':

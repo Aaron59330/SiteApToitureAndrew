@@ -70,3 +70,20 @@ a.dcard:hover{border-color:var(--red);transform:translateY(-2px)}
 .mf textarea{width:100%;background:#1a1a1a;border:1px solid #404040;color:#fff;padding:13px 14px;font:inherit;border-radius:12px;resize:vertical}
 .mrow{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}.mst{color:var(--muted);font-size:.9rem}.mst.bad{color:#ff8a8a}
 @media(max-width:760px){.msg-wrap{grid-template-columns:1fr}.msg-list{max-height:260px;border-right:0;border-bottom:1px solid var(--line)}}
+
+/* Éditeur de chantier */
+.adm-box.pm{width:min(720px,100%);max-height:92vh;overflow-y:auto;gap:12px}
+.pm label{display:grid;gap:6px;font-size:.88rem;color:#bbb}
+.pm input,.pm textarea{background:#1a1a1a;border:1px solid #444;color:#fff;padding:11px 12px;border-radius:10px;font:inherit;width:100%}
+.pm-photos{display:grid;gap:10px}.pm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.pm-th{position:relative;aspect-ratio:4/3;border-radius:10px;overflow:hidden;border:2px solid #333}.pm-th.cover{border-color:var(--red2)}
+.pm-th img{width:100%;height:100%;object-fit:cover;display:block}
+.pm-tag{position:absolute;top:5px;left:5px;background:var(--red);color:#fff;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:999px}
+.pm-ct{position:absolute;left:0;right:0;bottom:0;display:flex;gap:4px;padding:5px;background:linear-gradient(transparent,rgba(0,0,0,.85))}
+.adm-box .pm-ct button{flex:1;padding:4px 0;background:rgba(40,40,40,.9);border:1px solid #555;border-radius:6px;font-size:.85rem;color:#fff;cursor:pointer}
+.adm-box .pm-ct button.x:hover{background:#a11}
+.pm-empty{color:#888;grid-column:1/-1}.pm-msg{color:#9ad7a8;min-height:1.2em;font-size:.9rem}
+.adm-box .pm-add{flex:none;background:#262626;border-radius:999px;padding:10px 18px}
+.adm-box .dng{flex:none;background:transparent;border-color:#a33;color:#ff8a8a;border-radius:999px}
+.adm-box .row button{border-radius:999px}
+body[data-admin] .proj .adm-tools{position:absolute;z-index:6;top:12px;left:12px;display:flex;gap:6px}

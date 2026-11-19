@@ -13,13 +13,10 @@ for f in os.listdir(SRC):
 # admin : css + js (adapté aux routes PHP)
 shutil.copy(os.path.join(SRC,'admin','admin.css'),os.path.join(DST,'admin','admin.css'))
 js=open(os.path.join(SRC,'admin','admin.js'),encoding='utf8').read()
-for a,b in [("'/api/realisations/move'","'/api.php?a=real_move'"),
-            ("'/api/realisations', { method: 'POST', body: fd }","'/api.php?a=real_add', { method: 'POST', body: fd }"),
-            ("'/api/realisations/' + id, { method: 'PATCH'","'/api.php?a=real_edit&id=' + id, { method: 'POST'"),
-            ("'/api/realisations/' + id, { method: 'DELETE' }","'/api.php?a=real_del&id=' + id, { method: 'POST' }"),
-            ("'/api/upload'","'/api.php?a=upload'"),("'/api/content'","'/api.php?a=content'"),("'/api/logout'","'/api.php?a=logout'"),
-            ("location.href = '/admin'","location.href = '/admin/'"),
-            ("el('button', {}, 'Déconnexion')","el('button', {}, 'Déconnexion')")]:
+i0=js.index("  // ---------- réalisations"); i1=js.index("  setEditing(true);")
+js=js[:i0]+open(os.path.join(ST,'admin','gallery.js'),encoding='utf8').read()+js[i1:]
+for a,b in [("'/api/upload'","'/api.php?a=upload'"),("'/api/content'","'/api.php?a=content'"),("'/api/logout'","'/api.php?a=logout'"),
+            ("location.href = '/admin'","location.href = '/admin/'")]:
     assert a in js,a
     js=js.replace(a,b)
 js=js.replace("btnOut, msg);","btnOut, msg);\n  bar.insertBefore(el('a', { class: 'adm-link2', href: '/admin/messages.php' }, 'Messages'), btnEdit);\n  bar.insertBefore(el('a', { class: 'adm-link2', href: '/admin/' }, 'Tableau de bord'), btnEdit);",1)

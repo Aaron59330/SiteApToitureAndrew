@@ -29,37 +29,65 @@ if (form) {
   });
 }
 
-// Visionneuse des réalisations
+// Fenêtre de détail d'un chantier (galerie de photos + description)
 (function () {
   if (document.body.hasAttribute('data-admin')) return;
-  const items = () => Array.from(document.querySelectorAll('.shot-img'));
-  let idx = 0, box;
+  const cards = document.querySelectorAll('.proj');
+  const E = (t, c, x) => { const n = document.createElement(t); if (c) n.className = c; if (x != null) n.textContent = x; return n; };
+  let box, photos = [], idx = 0, lastFocus;
+  function para(text) { // une ligne = un paragraphe ; **gras**
+    const wrap = document.createDocumentFragment();
+    String(text || '').split(/\n+/).map(l => l.trim()).filter(Boolean).forEach(line => {
+      const p = E('p'); line.split(/(\*\*[^*]+\*\*)/).forEach(seg => {
+        if (/^\*\*[^*]+\*\*$/.test(seg)) p.append(E('b', null, seg.slice(2, -2))); else if (seg) p.append(document.createTextNode(seg));
+      }); wrap.append(p);
+    }); return wrap;
+  }
   const show = i => {
-    const list = items(); idx = (i + list.length) % list.length;
-    const fig = list[idx].closest('.shot');
-    const t = fig.querySelector('.t'), d = fig.querySelector('.d');
-    box.querySelector('img').src = list[idx].getAttribute('href');
-    box.querySelector('p').innerHTML = '';
-    if (t && t.textContent.trim()) { const b = document.createElement('b'); b.textContent = t.textContent; box.querySelector('p').appendChild(b); }
-    if (d && d.textContent.trim()) box.querySelector('p').appendChild(document.createTextNode(d.textContent));
+    idx = (i + photos.length) % photos.length;
+    box.querySelector('.pv-stage img').src = photos[idx];
+    box.querySelector('.pv-count').textContent = (idx + 1) + ' / ' + photos.length;
+    box.querySelectorAll('.pv-th').forEach((t, k) => t.classList.toggle('on', k === idx));
+    const on = box.querySelector('.pv-th.on'); if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest', inline: 'center' });
   };
-  const close = () => { if (box) { box.remove(); box = null; document.removeEventListener('keydown', key); } };
-  const key = e => { if (e.key === 'Escape') close(); if (e.key === 'ArrowRight') show(idx + 1); if (e.key === 'ArrowLeft') show(idx - 1); };
-  document.addEventListener('click', e => {
-    const a = e.target.closest('.shot-img');
-    if (!a) return;
-    e.preventDefault();
-    box = document.createElement('div'); box.className = 'lb';
-    box.innerHTML = '<button class="x" aria-label="Fermer">&times;</button><button class="pv" aria-label="Précédente">&#8249;</button><button class="nx" aria-label="Suivante">&#8250;</button><img alt=""><p></p>';
-    document.body.appendChild(box);
-    box.addEventListener('click', ev => {
-      if (ev.target.classList.contains('pv')) show(idx - 1);
-      else if (ev.target.classList.contains('nx')) show(idx + 1);
-      else if (ev.target.tagName !== 'IMG' && ev.target.tagName !== 'P' && ev.target.tagName !== 'B') close();
-    });
-    document.addEventListener('keydown', key);
-    show(items().indexOf(a));
-  });
+  const close = () => { if (!box) return; box.remove(); box = null; document.body.classList.remove('pv-open'); document.removeEventListener('keydown', key); if (lastFocus) lastFocus.focus(); };
+  const key = e => { if (e.key === 'Escape') close(); else if (e.key === 'ArrowRight') show(idx + 1); else if (e.key === 'ArrowLeft') show(idx - 1); };
+  function open(card) {
+    photos = JSON.parse(card.dataset.photos || '[]'); if (!photos.length) return;
+    lastFocus = card;
+    box = E('div', 'pv'); box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true');
+    const dlg = E('div', 'pv-box');
+    const media = E('div', 'pv-media'), stage = E('div', 'pv-stage'), img = E('img'); img.alt = card.dataset.title || '';
+    stage.append(E('span', 'pv-count'), img);
+    if (photos.length > 1) {
+      const pv = E('button', 'pv-nav pv-prev', '‹'), nx = E('button', 'pv-nav pv-next', '›'); pv.type = nx.type = 'button'; pv.setAttribute('aria-label', 'Photo précédente'); nx.setAttribute('aria-label', 'Photo suivante');
+      pv.onclick = () => show(idx - 1); nx.onclick = () => show(idx + 1); stage.append(pv, nx);
+    }
+    media.append(stage);
+    if (photos.length > 1) {
+      const th = E('div', 'pv-thumbs');
+      photos.forEach((u, k) => { const b = E('button', 'pv-th'); b.type = 'button'; const im = E('img'); im.src = u; im.alt = ''; im.loading = 'lazy'; b.append(im); b.onclick = () => show(k); th.append(b); });
+      media.append(th);
+    }
+    const info = E('div', 'pv-info');
+    if (card.dataset.cat) info.append(E('span', 'pv-cat', card.dataset.cat));
+    info.append(E('h3', null, card.dataset.title || ''));
+    const body = E('div', 'pv-desc'); body.append(para(card.dataset.desc)); info.append(body);
+    const cta = E('a', 'btn', 'Demander un devis similaire'); cta.href = 'contact.html?projet=' + encodeURIComponent(card.dataset.title || ''); info.append(E('div', 'pv-cta')); info.lastChild.append(cta);
+    const x = E('button', 'pv-x', '×'); x.type = 'button'; x.setAttribute('aria-label', 'Fermer'); x.onclick = close;
+    dlg.append(media, info, x); box.append(dlg);
+    box.addEventListener('click', e => { if (e.target === box) close(); });
+    document.body.append(box); document.body.classList.add('pv-open'); document.addEventListener('keydown', key);
+    show(0); x.focus();
+  }
+  cards.forEach(c => { c.addEventListener('click', () => open(c)); c.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(c); } }); });
+})();
+
+// « Demander un devis similaire » : préremplit le projet dans le formulaire
+(function () {
+  const f = document.getElementById('form'); if (!f) return;
+  const p = new URLSearchParams(location.search).get('projet'); if (!p) return;
+  const m = f.querySelector('textarea[name=message]'); if (m && !m.value) m.value = 'Bonjour, je souhaiterais un devis similaire à votre réalisation : « ' + p + ' ».';
 })();
 
 // Apparition douce au défilement

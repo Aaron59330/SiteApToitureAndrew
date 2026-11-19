@@ -246,14 +246,27 @@ function sync_link($el) {
   if (strpos($href, 'tel:') === 0) { $dg = preg_replace('/[^\d+]/', '', $txt); if (strlen($dg) >= 6) $a->setAttribute('href', 'tel:' . ($dg[0] === '0' ? '+33' . substr($dg, 1) : $dg)); }
   elseif (strpos($href, 'mailto:') === 0 && preg_match('/^[^@\s]+@[^@\s]+\.[^@\s]+$/', $txt)) $a->setAttribute('href', 'mailto:' . $txt);
 }
+function projects_norm($l) {
+  foreach ($l as &$p) {
+    if (isset($p['file']) && !isset($p['photos'])) { $p['photos'] = [$p['file']]; unset($p['file']); }
+    $p['photos'] = array_values($p['photos'] ?? []); $p['category'] = $p['category'] ?? ''; $p['title'] = $p['title'] ?? ''; $p['description'] = $p['description'] ?? '';
+  }
+  return $l;
+}
+function read_projects() { return projects_norm(read_json('realisations', [])); }
 function fill_gallery($d, $items, $admin) {
   $g = $d->getElementById('gallery'); if (!$g) return;
   $g->setAttribute('data-noedit', '');
-  if (!$items) { set_inner_html($g, '<p class="empty">' . ($admin ? 'Aucune photo pour le moment. Utilisez « Ajouter des photos » ci-dessus.' : 'Les réalisations seront bientôt publiées.') . '</p>'); return; }
+  $items = array_values(array_filter(projects_norm($items), fn($p) => !empty($p['photos'])));
+  if (!$items) { set_inner_html($g, '<p class="empty">' . ($admin ? 'Aucun chantier pour le moment. Utilisez « Nouveau chantier » ci-dessus.' : 'Les réalisations seront bientôt publiées.') . '</p>'); return; }
   $html = '';
   foreach ($items as $it) {
-    $alt = h(mb_substr($it['title'] ?: ($it['description'] ?: 'Réalisation AP Toiture'), 0, 120));
-    $html .= '<figure class="shot" data-id="' . h($it['id']) . '"><a class="shot-img" href="' . h($it['file']) . '"><img src="' . h($it['file']) . '" alt="' . $alt . '" loading="lazy"></a><figcaption><b class="t" data-ph="Ajouter un titre">' . h($it['title']) . '</b><span class="d" data-ph="Ajouter une description du chantier">' . h($it['description']) . '</span></figcaption></figure>';
+    $n = count($it['photos']);
+    $data = h(json_encode($it['photos'], JSON_UNESCAPED_SLASHES));
+    $html .= '<article class="proj" tabindex="0" role="button" data-id="' . h($it['id']) . '" data-title="' . h($it['title']) . '" data-cat="' . h($it['category']) . '" data-desc="' . h($it['description']) . '" data-photos="' . $data . '">'
+      . '<img src="' . h($it['photos'][0]) . '" alt="' . h($it['title'] ?: 'Réalisation AP Toiture') . '" loading="lazy">'
+      . '<span class="proj-count">' . $n . ' photo' . ($n > 1 ? 's' : '') . '</span>'
+      . '<div class="proj-info"><h3>' . h($it['title'] ?: 'Sans titre') . '</h3>' . ($it['category'] !== '' ? '<p>' . h($it['category']) . '</p>' : '') . '<span class="proj-more">Voir le détail &rarr;</span></div></article>';
   }
   set_inner_html($g, $html);
 }
