@@ -7,7 +7,7 @@
 body[data-admin]{padding-bottom:72px}
 .adm-bar{position:fixed;left:0;right:0;bottom:0;z-index:1000;background:#0d0d0d;border-top:2px solid var(--red);color:#fff;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;padding:10px 14px;font:500 .85rem var(--f2)}
 .adm-bar .tag{font-family:var(--f1);letter-spacing:.14em;text-transform:uppercase;font-size:.72rem;color:var(--red2);margin-right:6px}
-.adm-bar button{background:#262626;color:#fff;border:1px solid #444;padding:8px 14px;cursor:pointer;font:600 .78rem var(--f1);letter-spacing:.08em;text-transform:uppercase;border-radius:2px}
+.adm-bar button{background:#262626;color:#fff;border:1px solid #444;padding:8px 14px;cursor:pointer;font:600 .78rem var(--f1);letter-spacing:.08em;text-transform:uppercase;border-radius:999px}
 .adm-bar button:hover{border-color:#777}
 .adm-bar button.on{background:var(--red);border-color:var(--red)}
 .adm-bar button.save{background:var(--red);border-color:var(--red)}
@@ -41,3 +41,6 @@ body.adm-edit .menu a.btn{pointer-events:auto}
 body[data-admin] .shot .t,body[data-admin] .shot .d{display:block;outline:1px dashed rgba(239,74,68,.4);outline-offset:2px;min-height:1.4em;cursor:text}
 body[data-admin] .shot .t:empty::before,body[data-admin] .shot .d:empty::before{content:attr(data-ph);color:#777;font-weight:400;text-transform:none;letter-spacing:0}
 body[data-admin] .shot .t:focus,body[data-admin] .shot .d:focus{outline:2px solid #ef4a44}
+.adm-box,.adm-add{border-radius:16px}
+.adm-box button,.adm-add button{border-radius:999px}
+.adm-tools button{border-radius:10px}
