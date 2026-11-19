@@ -165,3 +165,7 @@ code{background:#333;padding:1px 6px;border-radius:3px}
 .logo img{border-radius:6px}
 code{border-radius:6px}
 img.carte,.carte img,.about img{border-radius:var(--r)}
+
+/* Logo sans fond blanc : liseré clair pour garder le noir lisible sur fond sombre */
+.hero-logo img{background:none;padding:0;border:0;border-radius:0;box-shadow:none;filter:drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 0 6px rgba(255,255,255,.55))}
+.logo img{filter:drop-shadow(0 0 1px #fff) drop-shadow(0 0 3px rgba(255,255,255,.5))}
