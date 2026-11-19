@@ -167,11 +167,11 @@ code{border-radius:6px}
 img.carte,.carte img,.about img{border-radius:var(--r)}
 
 /* Logo sans fond blanc : liseré clair pour garder le noir lisible sur fond sombre */
-.hero-logo img{background:none;padding:0;border:0;border-radius:0;box-shadow:none;filter:drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 0 6px rgba(255,255,255,.55))}
+.hero-logo img{background:none;padding:0;border:0;border-radius:0;box-shadow:none;filter:drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff)}
 .logo img{filter:drop-shadow(0 0 1px #fff) drop-shadow(0 0 3px rgba(255,255,255,.5))}
 
 /* ===== Amélioration design ===== */
-.hero{padding:110px 0 100px;background:radial-gradient(900px 500px at 85% 40%,rgba(212,42,38,.22),transparent 60%),linear-gradient(160deg,#1c1c1c,#141414)}
+.hero{padding:110px 0 100px;background:linear-gradient(160deg,#1c1c1c,#141414)}
 .hero::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,rgba(255,255,255,.025) 0 2px,transparent 2px 26px);pointer-events:none}
 .hero::after{display:none}
 .hero h1{font-weight:700;font-size:clamp(2.2rem,4.6vw,3.8rem)}
@@ -208,3 +208,5 @@ img.carte,.carte img,.about img{border-radius:var(--r)}
 @media(max-width:900px){.strip-in,.steps{grid-template-columns:1fr 1fr}.strip-in div:nth-child(3){border-left:0}}
 @media(max-width:520px){.steps{grid-template-columns:1fr}.hero{padding:70px 0}}
 @media(prefers-reduced-motion:reduce){.hero-logo img{animation:none}.reveal{opacity:1;transform:none}}
+
+.halo{display:none}

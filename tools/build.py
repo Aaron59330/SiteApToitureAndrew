@@ -87,7 +87,7 @@ index=f'''<section class="hero"><div class="container hero-in"><div class="hero-
 <h1>Votre toiture<br>entre de bonnes mains.</h1>
 <p class="lead">AP Toiture réalise la couverture, la zinguerie, les pignons et la pose de velux à Hautmont et dans les environs.</p>
 <div class="hero-btns"><a href="contact.html" class="btn">Demander un devis gratuit</a><a href="services.html" class="btn btn-ghost">Découvrir nos services</a></div><ul class="badges"><li>{I['shield']} Garantie décennale</li><li>{I['file']} Devis gratuit</li><li>{I['pin']} Hautmont et alentours</li></ul></div>
-<div class="hero-logo"><div class="halo"></div><img src="images/logo.png" alt="Logo AP Toiture"></div></div></section>
+<div class="hero-logo"><img src="images/logo.png" alt="Logo AP Toiture"></div></div></section>
 <section class="strip"><div class="container strip-in"><div><b>4</b><span>savoir-faire</span></div><div><b>10 ans</b><span>de garantie décennale</span></div><div><b>0 €</b><span>devis gratuit</span></div><div><b>1</b><span>interlocuteur unique</span></div></div></section>
 <section class="section"><div class="container"><div class="head"><p class="eyebrow">Nos métiers</p><h2>Ce que nous faisons</h2></div><div class="grid4">{cards}</div></div></section>
 <section class="section"><div class="container"><div class="head"><p class="eyebrow">Comment ça se passe</p><h2>Votre chantier en 4 étapes</h2></div><div class="steps">{steps}</div></div></section>
