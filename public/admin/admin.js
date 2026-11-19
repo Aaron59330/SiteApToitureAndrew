@@ -5,6 +5,7 @@
   const dirtyImg = new Map();
   let editing = true;
   let current = null;
+  let reloadAfter = false;
 
   const el = (tag, attrs = {}, ...kids) => {
     const n = document.createElement(tag);
@@ -113,12 +114,18 @@
     const choice = await dialog('Changer l\'image', 'Choisissez une nouvelle photo ou rétablissez l\'image d\'origine.',
       [['Choisir une photo', 'pick', true], ['Rétablir l\'originale', 'reset'], ['Annuler', null]]);
     if (choice === 'reset') {
-      img.src = img.dataset.ediOrig; dirtyImg.set(img.dataset.edi, img.dataset.ediOrig); refresh();
+      if (img.tagName === 'IMG') img.src = img.dataset.ediOrig; else reloadAfter = true;
+      dirtyImg.set(img.dataset.edi, img.dataset.ediOrig); refresh();
     } else if (choice === 'pick') {
       const [f] = await chooseFiles(false);
       if (!f) return;
       say('Envoi de l\'image…');
-      try { const url = await uploadFile(f); img.src = url; dirtyImg.set(img.dataset.edi, url); refresh(); }
+      try {
+        const url = await uploadFile(f);
+        if (img.tagName === 'IMG') img.src = url;
+        else { img.replaceChildren(el('img', { src: url, alt: '' })); }
+        dirtyImg.set(img.dataset.edi, url); refresh();
+      }
       catch (ex) { say(ex.message, true); }
     }
   }
@@ -130,6 +137,7 @@
     try {
       await api('/api/content', { method: 'POST', json: { page, text: Object.fromEntries(dirtyText), img: Object.fromEntries(dirtyImg) } });
       dirtyText.clear(); dirtyImg.clear(); refresh(); say('Modifications enregistrées');
+      if (reloadAfter) location.reload();
     } catch (ex) { say(ex.message, true); refresh(); }
   }
   btnSave.addEventListener('click', save);

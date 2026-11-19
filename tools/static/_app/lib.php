@@ -198,6 +198,13 @@ function process_page($raw, $page, $admin = false, $overrides = [], $gallery = n
     if ($el->nodeType !== XML_ELEMENT_NODE) return;
     $nm = strtolower($el->nodeName);
     if (in_array($nm, SKIP, true) || $el->hasAttribute('data-noedit')) return;
+    if (has_class($el, 'srv-ico')) { // bloc « icône » remplaçable par une photo
+      $key = 'pi' . $cnt['pi']++; $imgs[$key] = 'icon';
+      $o = $ovP[$key] ?? null;
+      if ($o && ($o['o'] ?? null) === 'icon' && is_string($o['v'] ?? null)) set_inner_html($el, '<img src="' . h($o['v']) . '" alt="">');
+      if ($admin) { $el->setAttribute('data-edi', $key); $el->setAttribute('data-edi-orig', 'icon'); }
+      return;
+    }
     if ($nm === 'img') {
       $sc = is_global($el) ? 'g' : 'p'; $key = $sc . 'i' . $cnt[$sc . 'i']++;
       $orig = $el->getAttribute('src'); $imgs[$key] = $orig;
