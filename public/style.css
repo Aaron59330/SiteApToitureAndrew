@@ -210,3 +210,26 @@ img.carte,.carte img,.about img{border-radius:var(--r)}
 @media(prefers-reduced-motion:reduce){.hero-logo img{animation:none}.reveal{opacity:1;transform:none}}
 
 .halo{display:none}
+
+/* ===== Typographie professionnelle ===== */
+:root{--f1:"Plus Jakarta Sans","Segoe UI",Arial,sans-serif;--f2:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif}
+body{font-size:16.5px;line-height:1.7;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{text-transform:none;letter-spacing:-.02em;font-weight:700;line-height:1.15}
+h1{font-size:clamp(2.2rem,4.6vw,3.6rem);font-weight:800;letter-spacing:-.03em}
+h2{font-size:clamp(1.7rem,3vw,2.35rem)}
+h3{font-size:1.15rem;letter-spacing:-.01em}
+.eyebrow{text-transform:none;letter-spacing:.02em;font-size:.9rem;font-weight:700}
+.eyebrow::before{width:26px;height:2px}
+.lead{font-size:1.15rem;line-height:1.7;max-width:540px}
+.btn{text-transform:none;letter-spacing:0;font-size:.95rem;font-weight:700;padding:14px 28px}
+.menu a:not(.btn){font-weight:600;font-size:.95rem}
+.logo{letter-spacing:.04em;font-weight:800;font-size:1.2rem}
+.more{text-transform:none;letter-spacing:0;font-size:.92rem}
+.crumb{text-transform:none!important;letter-spacing:0!important}
+.strip-in b{font-weight:800}.strip-in span{text-transform:none;letter-spacing:.01em;font-size:.92rem}
+.crow small,.irow span{text-transform:none;letter-spacing:0;font-size:.85rem}
+.shot figcaption,.shot .t,.lb b{text-transform:none;letter-spacing:0}
+.fgrid h4{text-transform:none;letter-spacing:0;font-size:1rem}
+.hero h1{background:none;color:#fff}
+.hero h1{text-wrap:balance}
+.step .num{font-weight:800}

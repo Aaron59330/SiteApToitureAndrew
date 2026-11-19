@@ -30,7 +30,7 @@ def page(fn,title,desc,body,hero=None):
 <title>{title} | AP Toiture – Couvreur à Hautmont</title>
 <meta name="description" content="{desc}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -76,22 +76,22 @@ SERV=[
 
 # ---------- INDEX
 cards=''.join(f'<a class="scard" href="services.html#{t.lower()}"><span class="sico">{I[k]}</span><h3>{t}</h3><p>{d}</p><span class="more">En savoir plus {I["arrow"]}</span></a>' for k,t,d,_ in SERV)
-why=[('file','Devis gratuit','Un chiffrage clair et détaillé, sans engagement et sans surprise.'),
-     ('user','Un interlocuteur unique','Vous échangez directement avec l\'artisan, du devis à la fin du chantier.'),
-     ('shield','Garantie décennale','Vos travaux sont couverts par notre garantie décennale, pour construire en toute sérénité.'),
-     ('check','Travail soigné','Des finitions propres et un chantier laissé net à la fin des travaux.')]
+why=[('file','Devis gratuit','Un chiffrage précis et détaillé, remis sans engagement.'),
+     ('user','Un interlocuteur unique','Un suivi assuré directement par l\'artisan, du devis à la réception des travaux.'),
+     ('shield','Garantie décennale','Vos travaux sont couverts par notre assurance décennale pour une tranquillité totale.'),
+     ('check','Travail soigné','Des finitions soignées et un chantier remis propre à la livraison.')]
 whyh=''.join(f'<div class="why"><span class="sico">{I[k]}</span><div><h3>{t}</h3><p>{d}</p></div></div>' for k,t,d in why)
-steps=''.join(f'<div class="step"><span class="num">0{n}</span><h3>{t}</h3><p>{d}</p></div>' for n,(t,d) in enumerate([('Contact','Vous nous appelez ou remplissez le formulaire.'),('Visite et devis','Nous évaluons vos besoins et vous remettons un devis clair.'),('Travaux','Chantier réalisé dans les règles de l\'art, dans les délais.'),('Finitions','Nettoyage du chantier et garantie décennale.')],1))
+steps=''.join(f'<div class="step"><span class="num">0{n}</span><h3>{t}</h3><p>{d}</p></div>' for n,(t,d) in enumerate([('Contact','Un échange par téléphone ou via le formulaire pour cadrer votre besoin.'),('Visite et devis','Nous analysons l\'état de la toiture et vous remettons un devis détaillé.'),('Travaux','Exécution selon les règles de l\'art et dans les délais convenus.'),('Finitions','Nettoyage complet du chantier et remise de la garantie décennale.')],1))
 index=f'''<section class="hero"><div class="container hero-in"><div class="hero-txt">
 <p class="eyebrow">Couverture · Zinguerie · Pignon · Velux</p>
-<h1>Votre toiture<br>entre de bonnes mains.</h1>
-<p class="lead">AP Toiture réalise la couverture, la zinguerie, les pignons et la pose de velux à Hautmont et dans les environs.</p>
-<div class="hero-btns"><a href="contact.html" class="btn">Demander un devis gratuit</a><a href="services.html" class="btn btn-ghost">Découvrir nos services</a></div><ul class="badges"><li>{I['shield']} Garantie décennale</li><li>{I['file']} Devis gratuit</li><li>{I['pin']} Hautmont et alentours</li></ul></div>
+<h1>Des toitures durables,<br>réalisées avec exigence.</h1>
+<p class="lead">Artisan couvreur à Hautmont, AP Toiture intervient sur l\'ensemble de vos besoins : couverture, zinguerie, pignons et fenêtres de toit. Un devis détaillé, un chantier maîtrisé, un résultat qui dure.</p>
+<div class="hero-btns"><a href="contact.html" class="btn">Demander un devis gratuit</a><a href="services.html" class="btn btn-ghost">Nos prestations</a></div><ul class="badges"><li>{I['shield']} Garantie décennale</li><li>{I['file']} Devis gratuit</li><li>{I['pin']} Hautmont et alentours</li></ul></div>
 <div class="hero-logo"><img src="images/logo.png" alt="Logo AP Toiture"></div></div></section>
 <section class="strip"><div class="container strip-in"><div><b>4</b><span>savoir-faire</span></div><div><b>10 ans</b><span>de garantie décennale</span></div><div><b>0 €</b><span>devis gratuit</span></div><div><b>1</b><span>interlocuteur unique</span></div></div></section>
-<section class="section"><div class="container"><div class="head"><p class="eyebrow">Nos métiers</p><h2>Ce que nous faisons</h2></div><div class="grid4">{cards}</div></div></section>
-<section class="section"><div class="container"><div class="head"><p class="eyebrow">Comment ça se passe</p><h2>Votre chantier en 4 étapes</h2></div><div class="steps">{steps}</div></div></section>
-<section class="section alt"><div class="container"><div class="head"><p class="eyebrow">Notre engagement</p><h2>Pourquoi choisir AP Toiture</h2></div><div class="grid2">{whyh}</div></div></section>
+<section class="section"><div class="container"><div class="head"><p class="eyebrow">Expertise</p><h2>Nos domaines d\'intervention</h2></div><div class="grid4">{cards}</div></div></section>
+<section class="section"><div class="container"><div class="head"><p class="eyebrow">Méthode</p><h2>Un déroulement clair, en quatre étapes</h2></div><div class="steps">{steps}</div></div></section>
+<section class="section alt"><div class="container"><div class="head"><p class="eyebrow">Nos engagements</p><h2>Ce que vous pouvez attendre de nous</h2></div><div class="grid2">{whyh}</div></div></section>
 {cta}'''
 
 # ---------- SERVICES
@@ -100,7 +100,7 @@ for n,(k,t,d,l) in enumerate(SERV):
     lis=''.join(f'<li>{I["check"]}<span>{x}</span></li>' for x in l)
     rev=' rev' if n%2 else ''
     sec+=f'<section class="section{" alt" if n%2 else ""}" id="{t.lower()}"><div class="container srv{rev}"><div class="srv-ico">{I[k].replace("width=\"28\" height=\"28\"","width=\"90\" height=\"90\"")}</div><div><p class="eyebrow">0{n+1}</p><h2>{t}</h2><p class="lead2">{d}</p><ul class="list">{lis}</ul><a class="btn" href="contact.html">Devis pour {t.lower()}</a></div></div></section>'
-services=banner('Nos services','Quatre savoir-faire pour une toiture complète, de la couverture aux finitions.','Services')+sec+cta
+services=banner('Nos prestations','Quatre domaines d\'expertise pour une toiture complète, de la couverture aux finitions.','Services')+sec+cta
 
 # ---------- REALISATIONS
 ph=lambda t:f'<figure class="shot"><div class="ph">{I["roof"].replace("width=\"28\" height=\"28\"","width=\"56\" height=\"56\"")}<span>Photo à venir</span></div><figcaption><b>{t}</b></figcaption></figure>'
@@ -109,7 +109,7 @@ real=banner('Nos réalisations','Un aperçu de nos chantiers de couverture, zing
 # ---------- A PROPOS
 infos=[('SIRET','107 447 617 00013'),('Activité','Couverture, zinguerie, pignon, velux'),('Garantie','Décennale'),('Zone','Hautmont (59330) et alentours'),('Contact',TEL)]
 inf=''.join(f'<div class="irow"><span>{a}</span><b>{b}</b></div>' for a,b in infos)
-about=banner('À propos','Une entreprise locale de couverture, à votre écoute.','À propos')+f'''<section class="section"><div class="container two"><div>
+about=banner('À propos','Une entreprise locale, un savoir-faire reconnu, une relation de confiance.','À propos')+f'''<section class="section"><div class="container two"><div>
 <p class="eyebrow">Qui sommes-nous</p><h2>AP Toiture, artisan couvreur</h2>
 <p class="para">Basée à Hautmont, AP Toiture intervient auprès des particuliers et des professionnels pour tous les travaux de toiture : couverture, zinguerie, pignon et pose de velux.</p>
 <p class="para">Notre approche est simple : un diagnostic honnête, un devis clair, des travaux réalisés dans les règles de l'art et un chantier laissé propre.</p>
@@ -121,8 +121,8 @@ about=banner('À propos','Une entreprise locale de couverture, à votre écoute.
 def row(k,l,v,h=None):
     v=f'<a href="{h}">{v}</a>' if h else v
     return f'<div class="crow"><span class="sico">{I[k]}</span><div><small>{l}</small><b>{v}</b></div></div>'
-contact=banner('Contact et devis gratuit','Décrivez votre projet, nous vous répondons rapidement.','Contact')+f'''<section class="section"><div class="container two">
-<div><p class="eyebrow">Nos coordonnées</p><h2>Parlons de votre toiture</h2>
+contact=banner('Contact et devis gratuit','Décrivez votre projet : nous vous répondons dans les meilleurs délais.','Contact')+f'''<section class="section"><div class="container two">
+<div><p class="eyebrow">Nos coordonnées</p><h2>Échangeons sur votre projet</h2>
 {row('phone','Téléphone',TEL,'tel:'+TELH)}{row('mail','E-mail',MAIL,'mailto:'+MAIL)}{row('pin','Adresse','59330 Hautmont')}
 </div>
 <form class="form" id="form"><h3>Demande de devis</h3>
