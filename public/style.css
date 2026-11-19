@@ -170,8 +170,8 @@ img.carte,.carte img,.about img{border-radius:var(--r)}
 .hero-logo img{background:none;padding:0;border:0;border-radius:0;box-shadow:none;filter:none}
 
 /* ===== Amélioration design ===== */
-.hero{padding:110px 0 100px;background:linear-gradient(160deg,#1c1c1c,#141414)}
-.hero::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,rgba(255,255,255,.025) 0 2px,transparent 2px 26px);pointer-events:none}
+.hero{padding:110px 0 100px;background:linear-gradient(180deg,#1b1b1b 0%,#161616 100%)}
+.hero::before{display:none}
 .hero::after{display:none}
 .hero h1{font-weight:700;font-size:clamp(2.2rem,4.6vw,3.8rem)}
 .hero h1{background:linear-gradient(180deg,#fff,#cfcfcf);-webkit-background-clip:text;background-clip:text;color:transparent}
