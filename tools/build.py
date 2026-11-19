@@ -37,7 +37,7 @@ def page(fn,title,desc,body,hero=None):
 <div class="topbar"><div class="container"><span>{I['pin'].replace('width="22" height="22"','width="15" height="15"')} Hautmont (59330) et alentours</span><a href="tel:{TELH}">{I['phone'].replace('width="22" height="22"','width="15" height="15"')} {TEL}</a></div></div>
 <header class="header">
 <div class="container nav">
-<a href="index.html" class="logo" aria-label="AP Toiture, accueil"><img src="images/mascotte.png" alt="" width="62" height="35"><span>AP <b>TOITURE</b></span></a>
+<a href="index.html" class="logo" aria-label="AP Toiture, accueil"><img src="images/logo.png" alt="AP Toiture" width="134" height="40"></a>
 <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false"><span></span><span></span><span></span></button>
 <nav class="menu">{nav}<a href="contact.html" class="btn btn-sm{' active' if fn=='contact.html' else ''}">Devis gratuit</a></nav>
 </div>
@@ -47,7 +47,7 @@ def page(fn,title,desc,body,hero=None):
 </main>
 <footer class="footer">
 <div class="container fgrid">
-<div><a href="index.html" class="logo"><img src="images/mascotte.png" alt="" width="62" height="35"><span>AP <b>TOITURE</b></span></a>
+<div><a href="index.html" class="logo"><img src="images/logo.png" alt="AP Toiture" width="134" height="40"></a>
 <p>Couverture, zinguerie, pignon et velux.<br>Artisan couvreur à Hautmont.</p></div>
 <div><h4>Navigation</h4>{''.join(f'<a href="{f}">{n}</a>' for f,n in PAGES)}</div>
 <div><h4>Contact</h4><a href="tel:{TELH}">{TEL}</a><a href="mailto:{MAIL}">{MAIL}</a><span>59330 Hautmont</span></div>

@@ -10,7 +10,7 @@ $mode = !$acc ? 'setup' : (!$admin ? 'login' : 'home');
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/admin/admin.css"></head>
 <body class="login-body"><main class="login">
-<a href="/" class="logo"><img src="/images/mascotte.png" alt="" width="62" height="35"><span>AP <b>TOITURE</b></span></a>
+<a href="/" class="logo"><img src="/images/logo.png" alt="AP Toiture" width="134" height="40"></a>
 <?php if ($mode === 'setup'): ?>
 <form class="form" id="f" data-a="setup"><h3>Créer votre compte administrateur</h3>
 <label>Code d'installation<input type="text" name="key" required autocomplete="off"></label>
