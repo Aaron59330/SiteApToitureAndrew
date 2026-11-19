@@ -92,6 +92,7 @@ index=f'''<section class="hero"><div class="container hero-in"><div class="hero-
 <section class="section"><div class="container"><div class="head"><p class="eyebrow">Expertise</p><h2>Nos domaines d\'intervention</h2></div><div class="grid4">{cards}</div></div></section>
 <section class="section"><div class="container"><div class="head"><p class="eyebrow">Méthode</p><h2>Un déroulement clair, en quatre étapes</h2></div><div class="steps">{steps}</div></div></section>
 <section class="section alt"><div class="container"><div class="head"><p class="eyebrow">Nos engagements</p><h2>Ce que vous pouvez attendre de nous</h2></div><div class="grid2">{whyh}</div></div></section>
+<section class="section" id="avis-section" data-noedit><div class="container"><div class="head"><p class="eyebrow">Avis clients</p><h2>Ils nous ont fait confiance</h2></div><div id="reviews"></div></div></section>
 {cta}'''
 
 # ---------- SERVICES

@@ -2,7 +2,7 @@
 require dirname(__DIR__) . '/_app/lib.php';
 header('Cache-Control: no-store'); header('X-Robots-Tag: noindex');
 $acc = admin_account(); $admin = is_admin();
-$unread = 0; if ($admin) foreach (read_json('messages', []) as $m) if (empty($m['read'])) $unread++;
+$unread = 0; $toValidate = 0; if ($admin) { foreach (read_json('messages', []) as $m) if (empty($m['read'])) $unread++; foreach (read_json('reviews', []) as $r) if (($r['status'] ?? '') === 'submitted') $toValidate++; }
 $mode = !$acc ? 'setup' : (!$admin ? 'login' : 'home');
 ?><!DOCTYPE html>
 <html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow">
@@ -28,6 +28,7 @@ $mode = !$acc ? 'setup' : (!$admin ? 'login' : 'home');
 <a class="dcard" href="/"><b>Modifier le site</b><span>Cliquez sur un texte ou une photo pour la changer directement sur les pages.</span></a>
 <a class="dcard" href="/realisations.html"><b>Gérer les réalisations</b><span>Ajoutez, ordonnez ou supprimez les photos de chantiers.</span></a>
 <a class="dcard" href="/admin/messages.php"><b>Messages <?= $unread ? '<i class="badge">' . $unread . '</i>' : '' ?></b><span>Demandes de devis reçues, avec réponse directe depuis le site.</span></a>
+<a class="dcard" href="/admin/avis.php"><b>Avis clients <?= $toValidate ? '<i class="badge">' . $toValidate . '</i>' : '' ?></b><span>Demandez un avis par e-mail, validez-le et liez-le à un chantier.</span></a>
 <details class="dcard"><summary><b>Changer mon e-mail / mot de passe</b></summary>
 <form id="pw" class="pwform"><label>E-mail de connexion<input type="email" name="email" value="<?= h($acc['email']) ?>" required></label>
 <label>Mot de passe actuel<input type="password" name="current" required autocomplete="current-password"></label>

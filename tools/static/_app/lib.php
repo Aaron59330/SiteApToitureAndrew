@@ -172,10 +172,11 @@ function is_global($el) { return (bool)closest($el, fn($n) => in_array(strtolowe
 function is_noedit($el) { return (bool)closest($el, fn($n) => $n->hasAttribute('data-noedit')); }
 function in_svg($el) { return (bool)closest($el, fn($n) => strtolower($n->nodeName) === 'svg'); }
 
-function process_page($raw, $page, $admin = false, $overrides = [], $gallery = null) {
+function process_page($raw, $page, $admin = false, $overrides = [], $gallery = null, $reviews = null) {
   $d = dom_load($raw);
   $body = $d->getElementsByTagName('body')->item(0);
-  if ($gallery !== null) fill_gallery($d, $gallery, $admin);
+  if ($gallery !== null) fill_gallery($d, $gallery, $admin, $reviews ?? []);
+  if ($reviews !== null && $page === 'index.html') fill_reviews($d, $reviews);
 
   // 1. enveloppe les textes « mixtes » dans des <span>
   $all = []; foreach ($body->getElementsByTagName('*') as $e) $all[] = $e;
@@ -253,8 +254,29 @@ function projects_norm($l) {
   }
   return $l;
 }
-function read_projects() { return projects_norm(read_json('realisations', [])); }
-function fill_gallery($d, $items, $admin) {
+function proj_seed() { $f = APP . '/seed/realisations.json'; return is_file($f) ? (json_decode(file_get_contents($f), true) ?: []) : []; }
+function read_projects() { return projects_norm(read_json('realisations', proj_seed())); }
+
+// ---------- avis clients
+function read_reviews() { return read_json('reviews', []); }
+function pub_reviews() { return array_values(array_filter(read_reviews(), fn($r) => ($r['status'] ?? '') === 'published')); }
+function fr_date($iso) { $m = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre']; $t = strtotime($iso ?: 'now'); return $m[(int)date('n', $t) - 1] . ' ' . date('Y', $t); }
+function stars_html($n) { $n = max(0, min(5, (int)$n)); return '<span class="stars" role="img" aria-label="' . $n . ' sur 5">' . str_repeat('★', $n) . '<i>' . str_repeat('★', 5 - $n) . '</i></span>'; }
+function review_public($r) { return ['name' => $r['name'] ?? '', 'rating' => (int)($r['rating'] ?? 5), 'text' => $r['text'] ?? '', 'date' => fr_date($r['published_at'] ?? ($r['submitted_at'] ?? ''))]; }
+function fill_reviews($d, $pub) {
+  $sec = $d->getElementById('avis-section'); if (!$sec) return;
+  if (!$pub) { $sec->parentNode->removeChild($sec); return; }
+  $titles = []; foreach (read_projects() as $p) $titles[$p['id']] = $p['title'];
+  $sum = 0; foreach ($pub as $r) $sum += (int)$r['rating'];
+  $avg = number_format($sum / count($pub), 1, ',', ''); $n = count($pub);
+  $html = '<div class="rv-sum">' . stars_html((int)round($sum / $n)) . '<b>' . $avg . '/5</b><span>' . $n . ' avis client' . ($n > 1 ? 's' : '') . '</span></div><div class="rv-grid">';
+  foreach (array_slice(array_reverse($pub), 0, 6) as $r) {
+    $html .= '<figure class="rv">' . stars_html($r['rating']) . '<blockquote>' . nl2br(h($r['text'])) . '</blockquote><figcaption><b>' . h($r['name']) . '</b><span>' . h(fr_date($r['published_at'] ?? $r['submitted_at'] ?? '')) . (!empty($r['project_id']) && isset($titles[$r['project_id']]) ? ' · ' . h($titles[$r['project_id']]) : '') . '</span></figcaption></figure>';
+  }
+  $html .= '</div>';
+  $box = $d->getElementById('reviews'); if ($box) set_inner_html($box, $html);
+}
+function fill_gallery($d, $items, $admin, $pub = []) {
   $g = $d->getElementById('gallery'); if (!$g) return;
   $g->setAttribute('data-noedit', '');
   $items = array_values(array_filter(projects_norm($items), fn($p) => !empty($p['photos'])));
@@ -263,12 +285,26 @@ function fill_gallery($d, $items, $admin) {
   foreach ($items as $it) {
     $n = count($it['photos']);
     $data = h(json_encode($it['photos'], JSON_UNESCAPED_SLASHES));
-    $html .= '<article class="proj" tabindex="0" role="button" data-id="' . h($it['id']) . '" data-title="' . h($it['title']) . '" data-cat="' . h($it['category']) . '" data-desc="' . h($it['description']) . '" data-photos="' . $data . '">'
+    $rv = array_values(array_map('review_public', array_filter($pub, fn($r) => ($r['project_id'] ?? '') === $it['id'])));
+    $rvAttr = h(json_encode($rv, JSON_UNESCAPED_UNICODE));
+    $rate = $rv ? '<span class="proj-rate">★ ' . number_format(array_sum(array_column($rv, 'rating')) / count($rv), 1, ',', '') . '</span>' : '';
+    $html .= '<article class="proj" tabindex="0" role="button" data-id="' . h($it['id']) . '" data-title="' . h($it['title']) . '" data-cat="' . h($it['category']) . '" data-desc="' . h($it['description']) . '" data-photos="' . $data . '" data-reviews="' . $rvAttr . '">'
       . '<img src="' . h($it['photos'][0]) . '" alt="' . h($it['title'] ?: 'Réalisation AP Toiture') . '" loading="lazy">'
-      . '<span class="proj-count">' . $n . ' photo' . ($n > 1 ? 's' : '') . '</span>'
+      . $rate . '<span class="proj-count">' . $n . ' photo' . ($n > 1 ? 's' : '') . '</span>'
       . '<div class="proj-info"><h3>' . h($it['title'] ?: 'Sans titre') . '</h3>' . ($it['category'] !== '' ? '<p>' . h($it['category']) . '</p>' : '') . '<span class="proj-more">Voir le détail &rarr;</span></div></article>';
   }
   set_inner_html($g, $html);
 }
 function page_list() { return ['index', 'services', 'realisations', 'a-propos', 'contact']; }
 function page_raw($p) { return in_array($p, page_list(), true) ? file_get_contents(APP . '/pages/' . $p . '.html') : null; }
+
+function send_review_request($r) {
+  $link = SITE_URL . '/avis.php?t=' . $r['token'];
+  $hello = ($r['name'] ?? '') !== '' ? 'Bonjour ' . h($r['name']) . ',' : 'Bonjour,';
+  $inner = '<p style="margin-top:0">' . $hello . '</p><p>Merci de nous avoir fait confiance pour vos travaux. Votre retour compte beaucoup pour nous : il nous aide à nous améliorer et à rassurer les futurs clients.</p>'
+    . '<p>Pourriez-vous prendre une minute pour nous laisser un avis ?</p>'
+    . '<p style="color:#777;font-size:13px;margin-top:20px">Ce lien est personnel. Si le bouton ne fonctionne pas, copiez cette adresse dans votre navigateur :<br>' . h($link) . '</p>';
+  $html = mail_layout('Votre avis nous intéresse', $inner, ['Donner mon avis', $link]);
+  $text = (($r['name'] ?? '') !== '' ? 'Bonjour ' . $r['name'] . ",\n\n" : "Bonjour,\n\n") . "Merci de nous avoir fait confiance pour vos travaux. Pourriez-vous nous laisser un avis ?\n\n$link\n\nAP Toiture - 06 25 44 11 31";
+  return send_mail($r['email'], 'Votre avis sur nos travaux - AP Toiture', $html, $text, MAIL_TO, 'AP Toiture');
+}

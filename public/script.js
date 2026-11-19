@@ -73,6 +73,12 @@ if (form) {
     if (card.dataset.cat) info.append(E('span', 'pv-cat', card.dataset.cat));
     info.append(E('h3', null, card.dataset.title || ''));
     const body = E('div', 'pv-desc'); body.append(para(card.dataset.desc)); info.append(body);
+    let rv = []; try { rv = JSON.parse(card.dataset.reviews || '[]'); } catch (e) {}
+    rv.forEach(r => {
+      const q = E('div', 'pv-review'); q.append(E('b', 'pv-rt', 'Avis du client'));
+      const st = E('span', 'stars'); st.append(document.createTextNode('★'.repeat(r.rating))); const dim = E('i', null, '★'.repeat(5 - r.rating)); st.append(dim); q.append(st);
+      const bq = E('blockquote'); bq.append(para(r.text)); q.append(bq, E('small', null, '— ' + r.name + (r.date ? ' · ' + r.date : ''))); info.append(q);
+    });
     const cta = E('a', 'btn', 'Demander un devis similaire'); cta.href = 'contact.html?projet=' + encodeURIComponent(card.dataset.title || ''); info.append(E('div', 'pv-cta')); info.lastChild.append(cta);
     const x = E('button', 'pv-x', '×'); x.type = 'button'; x.setAttribute('aria-label', 'Fermer'); x.onclick = close;
     dlg.append(media, info, x); box.append(dlg);

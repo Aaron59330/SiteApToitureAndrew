@@ -19,12 +19,18 @@ for a,b in [("'/api/upload'","'/api.php?a=upload'"),("'/api/content'","'/api.php
             ("location.href = '/admin'","location.href = '/admin/'")]:
     assert a in js,a
     js=js.replace(a,b)
-js=js.replace("btnOut, msg);","btnOut, msg);\n  bar.insertBefore(el('a', { class: 'adm-link2', href: '/admin/messages.php' }, 'Messages'), btnEdit);\n  bar.insertBefore(el('a', { class: 'adm-link2', href: '/admin/' }, 'Tableau de bord'), btnEdit);",1)
+js=js.replace("btnOut, msg);","btnOut, msg);\n  bar.insertBefore(el('a', { class: 'adm-link2', href: '/admin/avis.php' }, 'Avis'), btnEdit);\n  bar.insertBefore(el('a', { class: 'adm-link2', href: '/admin/messages.php' }, 'Messages'), btnEdit);\n  bar.insertBefore(el('a', { class: 'adm-link2', href: '/admin/' }, 'Tableau de bord'), btnEdit);",1)
 open(os.path.join(DST,'admin','admin.js'),'w',encoding='utf8').write(js)
 open(os.path.join(DST,'admin','admin.css'),'a').write('\n.adm-link2{color:#fff;border:1px solid #444;padding:8px 14px;border-radius:999px;font:600 .78rem var(--f1);letter-spacing:.06em}.adm-link2:hover{border-color:#777}\n')
+# données de départ : chantiers et photos existants (utilisés seulement si le site n'a pas encore ses propres données)
+SEED=os.path.join(ROOT,'tools','seed')
+if os.path.isdir(SEED):
+    os.makedirs(os.path.join(DST,'_app','seed'),exist_ok=True)
+    shutil.copy(os.path.join(SEED,'realisations.json'),os.path.join(DST,'_app','seed','realisations.json'))
+    for f in os.listdir(os.path.join(SEED,'uploads')): shutil.copy(os.path.join(SEED,'uploads',f),os.path.join(DST,'uploads',f))
 # PHP
-for f in ['page.php','api.php','contact.php']: shutil.copy(os.path.join(ST,f),DST)
-for f in ['index.php','messages.php']: shutil.copy(os.path.join(ST,'admin',f),os.path.join(DST,'admin'))
+for f in ['page.php','api.php','contact.php','avis.php']: shutil.copy(os.path.join(ST,f),DST)
+for f in ['index.php','messages.php','avis.php']: shutil.copy(os.path.join(ST,'admin',f),os.path.join(DST,'admin'))
 for f in ['lib.php','.htaccess']: shutil.copy(os.path.join(ST,'_app',f),os.path.join(DST,'_app'))
 shutil.copy(os.path.join(ST,'root.htaccess'),os.path.join(DST,'.htaccess'))
 shutil.copy(os.path.join(ST,'uploads.htaccess'),os.path.join(DST,'uploads','.htaccess'))

@@ -22,6 +22,27 @@ if ($a === 'setup') {
   write_json('admin', ['email' => $email, 'hash' => password_hash($pw, PASSWORD_DEFAULT)]);
   set_session(); jout(['ok' => true]);
 }
+if ($a === 'review_submit') { // page publique « avis.php » (lien personnel reçu par e-mail)
+  if (!rate_limit('review:' . client_ip(), 12, 3600)) jout(['error' => 'Trop de tentatives, réessayez plus tard.'], 429);
+  $t = (string)($in['t'] ?? ''); $rating = (int)($in['rating'] ?? 0);
+  $name = trim(strip_tags(clip($in['name'] ?? '', 80))); $text = trim(strip_tags(clip($in['text'] ?? '', 1500)));
+  if ($rating < 1 || $rating > 5 || mb_strlen($text) < 10 || $name === '') jout(['error' => 'Merci de renseigner votre nom, une note et un avis d\'au moins 10 caractères.'], 422);
+  if (empty($in['consent'])) jout(['error' => 'Merci d\'accepter la publication de votre avis.'], 422);
+  $state = 'invalid';
+  update_json('reviews', [], function (&$l) use ($t, $rating, $name, $text, &$state) {
+    foreach ($l as &$r) if ($t !== '' && hash_equals($r['token'], $t)) {
+      if (($r['status'] ?? '') !== 'requested') { $state = 'done'; return; }
+      $r['status'] = 'submitted'; $r['rating'] = $rating; $r['name'] = $name; $r['text'] = $text; $r['submitted_at'] = date('c'); $state = 'ok';
+    }
+  });
+  if ($state === 'invalid') jout(['error' => 'Lien invalide.'], 404);
+  if ($state === 'done') jout(['error' => 'Vous avez déjà envoyé votre avis, merci !'], 409);
+  $inner = '<p style="margin-top:0">Un client vient de laisser un avis sur votre site.</p><p style="font-size:20px;color:#d42a26;margin:8px 0">' . str_repeat('★', $rating) . str_repeat('☆', 5 - $rating) . '</p>'
+    . '<div style="padding:16px 18px;background:#f7f7f8;border-left:4px solid #d42a26;border-radius:6px">' . nl2br(h($text)) . '</div><p style="margin-top:14px"><b>' . h($name) . '</b></p>'
+    . '<p style="color:#777;font-size:13px">Il n\'est pas encore visible sur le site : validez-le (et liez-le à un chantier si vous le souhaitez) depuis votre espace admin.</p>';
+  send_mail(MAIL_TO, 'Nouvel avis client - ' . $name . ' (' . $rating . '/5)', mail_layout('Nouvel avis client', $inner, ['Voir l\'avis', SITE_URL . '/admin/avis.php']), "Nouvel avis de $name ($rating/5) :\n\n$text\n\n" . SITE_URL . "/admin/avis.php", null, 'Site AP Toiture');
+  jout(['ok' => true]);
+}
 if ($a === 'logout') { clear_session(); jout(['ok' => true]); }
 
 // ---- session administrateur obligatoire
@@ -61,7 +82,7 @@ switch ($a) {
     $title = trim(clip($in['title'] ?? '', 140));
     if ($title === '' || !$photos) jout(['error' => 'Un titre et au moins une photo sont nécessaires.'], 422);
     $id = (string)($in['id'] ?? ''); $removed = [];
-    update_json('realisations', [], function (&$l) use (&$id, $in, $title, $photos, &$removed) {
+    update_json('realisations', proj_seed(), function (&$l) use (&$id, $in, $title, $photos, &$removed) {
       $l = projects_norm($l); $found = false;
       foreach ($l as &$p) if ($id !== '' && $p['id'] === $id) {
         $found = true; $removed = array_diff($p['photos'], $photos);
@@ -75,7 +96,7 @@ switch ($a) {
 
   case 'proj_del':
     $files = [];
-    update_json('realisations', [], function (&$l) use (&$files) {
+    update_json('realisations', proj_seed(), function (&$l) use (&$files) {
       $l = projects_norm($l);
       $l = array_values(array_filter($l, function ($p) use (&$files) { if ($p['id'] === ($_GET['id'] ?? '')) { $files = $p['photos']; return false; } return true; }));
     });
@@ -83,7 +104,7 @@ switch ($a) {
     jout(['ok' => true]);
 
   case 'real_move':
-    update_json('realisations', [], function (&$l) use ($in) {
+    update_json('realisations', proj_seed(), function (&$l) use ($in) {
       $i = null; foreach ($l as $k => $it) if ($it['id'] === ($in['id'] ?? '')) $i = $k;
       if ($i === null) return; $j = $i + (($in['dir'] ?? '') === 'up' ? -1 : 1);
       if ($j < 0 || $j >= count($l)) return; [$l[$i], $l[$j]] = [$l[$j], $l[$i]];
@@ -112,6 +133,46 @@ switch ($a) {
     $ok = send_mail($msg['email'], 'Réponse à votre demande - AP Toiture', $html, "Bonjour " . $msg['nom'] . ",\n\n$text\n\nCordialement,\nAP Toiture\n06 25 44 11 31", MAIL_TO, 'AP Toiture');
     if (!$ok) jout(['error' => 'L\'e-mail n\'a pas pu être envoyé. Répondez directement à ' . $msg['email']], 500);
     update_json('messages', [], function (&$l) use ($in, $text) { foreach ($l as &$m) if ($m['id'] === $in['id']) { $m['read'] = true; $m['replies'][] = ['date' => date('c'), 'text' => $text]; } });
+    jout(['ok' => true]);
+
+  // ---- avis clients
+  case 'review_list':
+    $l = read_reviews(); usort($l, fn($x, $y) => strcmp($y['created'] ?? '', $x['created'] ?? ''));
+    $titles = []; foreach (read_projects() as $p) $titles[] = ['id' => $p['id'], 'title' => $p['title'], 'category' => $p['category']];
+    jout(['reviews' => $l, 'projects' => $titles]);
+
+  case 'review_request':
+    $email = trim((string)($in['email'] ?? '')); $name = trim(strip_tags(clip($in['name'] ?? '', 80)));
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) jout(['error' => 'E-mail du client invalide.'], 422);
+    $r = ['id' => new_id(), 'token' => bin2hex(random_bytes(16)), 'email' => $email, 'name' => $name, 'project_id' => (string)($in['project_id'] ?? ''), 'status' => 'requested', 'rating' => 0, 'text' => '', 'created' => date('c')];
+    update_json('reviews', [], function (&$l) use ($r) { array_unshift($l, $r); });
+    $sent = send_review_request($r);
+    jout(['ok' => true, 'mailed' => $sent, 'link' => SITE_URL . '/avis.php?t=' . $r['token']]);
+
+  case 'review_resend':
+    $r = null; foreach (read_reviews() as $x) if ($x['id'] === ($in['id'] ?? '')) $r = $x;
+    if (!$r || $r['status'] !== 'requested') jout(['error' => 'Demande introuvable ou déjà complétée.'], 404);
+    jout(['ok' => true, 'mailed' => send_review_request($r), 'link' => SITE_URL . '/avis.php?t=' . $r['token']]);
+
+  case 'review_update':
+    $found = false;
+    update_json('reviews', [], function (&$l) use ($in, &$found) {
+      foreach ($l as &$r) if ($r['id'] === ($in['id'] ?? '')) {
+        $found = true;
+        if (array_key_exists('project_id', $in)) $r['project_id'] = (string)$in['project_id'];
+        if (array_key_exists('name', $in)) $r['name'] = trim(clip(strip_tags($in['name']), 80));
+        if (array_key_exists('text', $in)) $r['text'] = trim(clip(strip_tags($in['text']), 1500));
+        if (array_key_exists('rating', $in)) $r['rating'] = max(1, min(5, (int)$in['rating']));
+        if (isset($in['status']) && in_array($in['status'], ['submitted', 'published', 'hidden'], true) && ($r['status'] !== 'requested')) {
+          if ($in['status'] === 'published' && $r['status'] !== 'published') $r['published_at'] = date('c');
+          $r['status'] = $in['status'];
+        }
+      }
+    });
+    $found ? jout(['ok' => true]) : jout(['error' => 'Introuvable'], 404);
+
+  case 'review_del':
+    update_json('reviews', [], function (&$l) use ($in) { $l = array_values(array_filter($l, fn($r) => $r['id'] !== ($in['id'] ?? ''))); });
     jout(['ok' => true]);
 
   case 'pw':
