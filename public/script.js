@@ -9,12 +9,23 @@ burger.addEventListener('click', () => {
 
 const form = document.getElementById('form');
 if (form) {
-  form.addEventListener('submit', e => {
+  const ok = form.querySelector('.ok');
+  const btn = form.querySelector('button[type=submit]');
+  form.addEventListener('submit', async e => {
     e.preventDefault();
     const f = new FormData(form);
-    const body = `Nom : ${f.get('nom')}\nTéléphone : ${f.get('tel')}\nE-mail : ${f.get('email')}\nTravaux : ${f.get('type')}\n\n${f.get('message')}`;
-    form.querySelector('.ok').hidden = false;
-    location.href = `mailto:apcouvreur@gmail.com?subject=${encodeURIComponent('Demande de devis')}&body=${encodeURIComponent(body)}`;
+    btn.disabled = true; ok.hidden = true; ok.classList.remove('bad');
+    try {
+      const r = await fetch('contact.php', { method: 'POST', body: f });
+      const j = await r.json();
+      if (!r.ok || !j.ok) throw new Error('send');
+      ok.textContent = 'Merci ! Votre demande a bien été envoyée, nous vous répondons rapidement.';
+      form.reset();
+    } catch (err) {
+      ok.classList.add('bad');
+      ok.innerHTML = 'L\u2019envoi a échoué. Appelez-nous au 06 25 44 11 31 ou écrivez à <a href="mailto:apcouvreur@gmail.com">apcouvreur@gmail.com</a>.';
+    }
+    ok.hidden = false; btn.disabled = false;
   });
 }
 

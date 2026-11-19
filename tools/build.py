@@ -130,8 +130,9 @@ contact=banner('Contact et devis gratuit','Décrivez votre projet : nous vous r�
 <label>E-mail<input type="email" name="email" required></label>
 <label>Type de travaux<select name="type"><option>Couverture</option><option>Zinguerie</option><option>Pignon</option><option>Velux</option><option>Réparation / fuite</option><option>Autre</option></select></label>
 <label>Votre projet<textarea name="message" rows="5"></textarea></label>
+<input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
 <button class="btn" type="submit">Envoyer la demande</button>
-<p class="ok" hidden>Votre messagerie va s'ouvrir pour envoyer la demande.</p></form></div></section>'''
+<p class="ok" hidden></p></form></div></section>'''
 
 for fn,t,d,b in [
  ('index.html','Couvreur à Hautmont','AP Toiture, couvreur à Hautmont : couverture, zinguerie, pignon et velux. Devis gratuit.',index),

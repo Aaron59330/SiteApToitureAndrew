@@ -11,6 +11,7 @@ for f in os.listdir(DST):
     if f=='realisations.html':
         s=s.replace('<div class="gallery" id="gallery"></div>','<div class="gallery-empty"><h3>Nos réalisations arrivent bientôt</h3><p>Contactez-nous pour découvrir nos derniers chantiers.</p><a class="btn" href="contact.html">Nous contacter</a></div>')
     open(p,'w',encoding='utf8').write(s)
+shutil.copy(os.path.join(ROOT,'tools','static','contact.php'),DST)
 open(os.path.join(DST,'.htaccess'),'w').write('''RewriteEngine On
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
