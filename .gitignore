@@ -2,3 +2,4 @@ node_modules/
 data/
 .env
 dist/
+tools/.setup_key

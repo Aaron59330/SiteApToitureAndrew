@@ -1,0 +1,14 @@
+RewriteEngine On
+# Toujours en HTTPS, sans www
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+# Pages rendues par PHP (textes et photos modifiables)
+RewriteRule ^$ page.php?p=index [L]
+RewriteRule ^(index|services|realisations|a-propos|contact)\.html$ page.php?p=$1 [L]
+Options -Indexes
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
