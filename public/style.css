@@ -237,3 +237,30 @@ h3{font-size:1.15rem;letter-spacing:-.01em}
 .srv-ico img{width:100%;height:100%;object-fit:cover;display:block}
 
 .logo img{height:40px;width:auto;border-radius:0}.footer .logo img{height:46px}
+
+/* ===== Effets au survol / clic ===== */
+.btn{position:relative;overflow:hidden;isolation:isolate;transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s,background .2s,border-color .2s,color .2s}
+.btn::after{content:"";position:absolute;top:0;bottom:0;left:-80%;width:50%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.38),transparent);transform:skewX(-20deg);transition:left .6s ease;z-index:-1;pointer-events:none}
+.btn:hover::after{left:130%}
+.btn:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 14px 28px rgba(212,42,38,.4)}
+.btn-ghost:hover,.btn-light:hover{box-shadow:0 12px 24px rgba(0,0,0,.35)}
+.btn:active{transform:translateY(0) scale(.96);transition-duration:.08s}
+.rip{position:absolute;border-radius:50%;background:rgba(255,255,255,.45);transform:scale(0);animation:rip .6s ease-out forwards;pointer-events:none;z-index:-1}
+@keyframes rip{to{transform:scale(4);opacity:0}}
+.more svg,.arrow{transition:transform .25s}.scard:hover .more svg{transform:translateX(6px)}
+.scard{transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s,border-color .3s,background .3s}
+.scard:hover .sico{transform:rotate(-6deg) scale(1.1)}.sico{transition:transform .3s cubic-bezier(.3,1.5,.5,1)}
+.scard:active{transform:translateY(-2px) scale(.985)}
+.step{transition:transform .3s cubic-bezier(.2,.8,.2,1),border-color .3s,box-shadow .3s}
+.step:hover{box-shadow:0 16px 34px rgba(0,0,0,.35),0 0 0 1px var(--red)}.step:hover .num{-webkit-text-stroke-color:#fff}
+.badges li{transition:transform .25s,border-color .25s,background .25s}.badges li:hover{transform:translateY(-3px);border-color:var(--red);background:rgba(212,42,38,.12)}
+.why{transition:transform .25s}.why:hover{transform:translateX(6px)}.why .sico{transition:transform .3s cubic-bezier(.3,1.5,.5,1)}.why:hover .sico{transform:scale(1.12) rotate(-5deg)}
+.logo img{transition:transform .3s cubic-bezier(.3,1.5,.5,1)}.logo:hover img{transform:scale(1.07) rotate(-1.5deg)}
+.shot{transition:transform .3s,box-shadow .3s}.shot:hover{transform:translateY(-5px);box-shadow:0 18px 36px rgba(0,0,0,.4)}
+.footer a{transition:color .2s,transform .2s;display:inline-block}.footer a:hover{transform:translateX(4px)}
+.form input,.form select,.form textarea{transition:border-color .2s,box-shadow .2s,transform .2s}.form input:focus,.form select:focus,.form textarea:focus{transform:translateY(-1px)}
+.burger:active{transform:scale(.9)}
+.snd{position:fixed;left:16px;bottom:16px;z-index:60;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:rgba(26,26,26,.9);color:#fff;cursor:pointer;display:grid;place-items:center;transition:transform .2s,border-color .2s;backdrop-filter:blur(6px)}
+.snd:hover{transform:scale(1.1);border-color:var(--red)}.snd svg{width:20px;height:20px}.snd.off{color:#777}
+body[data-admin] .snd{display:none}
+@media(prefers-reduced-motion:reduce){.btn,.btn::after,.scard,.step,.badges li,.why,.logo img,.shot{transition:none!important}.btn:hover{transform:none}.rip{display:none}}

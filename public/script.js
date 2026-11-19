@@ -68,3 +68,52 @@ if (form) {
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12 });
   document.querySelectorAll('.scard,.step,.why,.head').forEach(el => { el.classList.add('reveal'); io.observe(el); });
 })();
+
+// Petits effets sonores (synthétisés, aucun fichier) + ondulation au clic
+(function () {
+  if (document.body.hasAttribute('data-admin')) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let on = true; try { on = localStorage.getItem('ap_sound') !== 'off'; } catch (e) {}
+  let ctx = null;
+  const audio = () => { if (!ctx) { const A = window.AudioContext || window.webkitAudioContext; if (A) ctx = new A(); } if (ctx && ctx.state === 'suspended') ctx.resume(); return ctx; };
+  function tone(f1, f2, dur, vol, type) {
+    const c = audio(); if (!c) return;
+    const t = c.currentTime, o = c.createOscillator(), g = c.createGain();
+    o.type = type || 'sine'; o.frequency.setValueAtTime(f1, t); o.frequency.exponentialRampToValueAtTime(f2, t + dur * .8);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + .008); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(c.destination); o.start(t); o.stop(t + dur + .02);
+  }
+  const pop = () => { tone(420, 880, .11, .09); setTimeout(() => tone(880, 1320, .09, .045, 'triangle'), 45); }; // « pop » montant
+  const soft = () => tone(300, 480, .07, .05);                                                                    // clic discret
+  const tick = () => tone(1200, 1500, .035, .018, 'triangle');                                                     // survol très léger
+
+  document.addEventListener('click', e => {
+    const b = e.target.closest('.btn, .scard, .menu a, .badges li, .step, .more, .burger, .footer a, .logo');
+    if (!b) return;
+    if (on) (b.classList.contains('btn') ? pop : soft)();
+    if (!reduce && b.classList.contains('btn')) {
+      const r = b.getBoundingClientRect(), s = Math.max(r.width, r.height) / 2, x = document.createElement('span');
+      x.className = 'rip'; x.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX - r.left - s / 2}px;top:${e.clientY - r.top - s / 2}px`;
+      b.append(x); setTimeout(() => x.remove(), 650);
+    }
+  }, true);
+  let last = 0;
+  document.addEventListener('pointerover', e => {
+    if (!on || e.pointerType !== 'mouse') return;
+    const b = e.target.closest('.btn, .scard, .menu a'); if (!b || (e.relatedTarget && b.contains(e.relatedTarget))) return;
+    const n = performance.now(); if (n - last < 120) return; last = n; if (ctx && ctx.state === 'running') tick();
+  });
+
+  // bouton son (coupe / active)
+  const ico = v => v
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m16 9 5 6m0-6-5 6"/></svg>';
+  const btn = document.createElement('button');
+  btn.className = 'snd' + (on ? '' : ' off'); btn.type = 'button'; btn.title = 'Sons du site'; btn.setAttribute('aria-label', 'Activer ou couper les sons du site');
+  btn.innerHTML = ico(on);
+  btn.addEventListener('click', e => {
+    e.stopPropagation(); on = !on; try { localStorage.setItem('ap_sound', on ? 'on' : 'off'); } catch (x) {}
+    btn.classList.toggle('off', !on); btn.innerHTML = ico(on); if (on) pop();
+  });
+  document.body.append(btn);
+})();
