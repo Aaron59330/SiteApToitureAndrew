@@ -267,3 +267,13 @@ body[data-admin] .snd{display:none}
 
 .hero{border-bottom:0;padding-bottom:130px}
 @media(max-width:700px){.hero{padding-bottom:100px}.hero::after{height:22px}}
+
+/* Brillance continue sur le logo (même effet que sur les boutons) */
+.hero-logo{animation:float 6s ease-in-out infinite;line-height:0}
+.hero-logo img{animation:none}
+.hero-logo::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(100deg,transparent 40%,rgba(255,255,255,.95) 50%,transparent 60%) no-repeat;background-size:260% 100%;background-position:130% 0;
+  -webkit-mask:url("images/logo.png") center/contain no-repeat;mask:url("images/logo.png") center/contain no-repeat;
+  animation:logoShine 3.8s ease-in-out infinite}
+@keyframes logoShine{0%{background-position:130% 0}45%,100%{background-position:-30% 0}}
+@media(prefers-reduced-motion:reduce){.hero-logo,.hero-logo::after{animation:none}}
