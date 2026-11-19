@@ -50,3 +50,10 @@ if (form) {
     show(items().indexOf(a));
   });
 })();
+
+// Apparition douce au défilement
+(function () {
+  if (document.body.hasAttribute('data-admin') || !('IntersectionObserver' in window)) return;
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12 });
+  document.querySelectorAll('.scard,.step,.why,.head').forEach(el => { el.classList.add('reveal'); io.observe(el); });
+})();

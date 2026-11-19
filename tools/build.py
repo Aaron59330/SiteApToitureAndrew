@@ -81,13 +81,16 @@ why=[('file','Devis gratuit','Un chiffrage clair et détaillé, sans engagement 
      ('shield','Garantie décennale','Vos travaux sont couverts par notre garantie décennale, pour construire en toute sérénité.'),
      ('check','Travail soigné','Des finitions propres et un chantier laissé net à la fin des travaux.')]
 whyh=''.join(f'<div class="why"><span class="sico">{I[k]}</span><div><h3>{t}</h3><p>{d}</p></div></div>' for k,t,d in why)
+steps=''.join(f'<div class="step"><span class="num">0{n}</span><h3>{t}</h3><p>{d}</p></div>' for n,(t,d) in enumerate([('Contact','Vous nous appelez ou remplissez le formulaire.'),('Visite et devis','Nous évaluons vos besoins et vous remettons un devis clair.'),('Travaux','Chantier réalisé dans les règles de l\'art, dans les délais.'),('Finitions','Nettoyage du chantier et garantie décennale.')],1))
 index=f'''<section class="hero"><div class="container hero-in"><div class="hero-txt">
 <p class="eyebrow">Couverture · Zinguerie · Pignon · Velux</p>
 <h1>Votre toiture<br>entre de bonnes mains.</h1>
 <p class="lead">AP Toiture réalise la couverture, la zinguerie, les pignons et la pose de velux à Hautmont et dans les environs.</p>
-<div class="hero-btns"><a href="contact.html" class="btn">Demander un devis gratuit</a><a href="services.html" class="btn btn-ghost">Découvrir nos services</a></div><p class="hero-note">{I['shield']} Garantie décennale</p></div>
-<div class="hero-logo"><img src="images/logo.png" alt="Logo AP Toiture"></div></div></section>
+<div class="hero-btns"><a href="contact.html" class="btn">Demander un devis gratuit</a><a href="services.html" class="btn btn-ghost">Découvrir nos services</a></div><ul class="badges"><li>{I['shield']} Garantie décennale</li><li>{I['file']} Devis gratuit</li><li>{I['pin']} Hautmont et alentours</li></ul></div>
+<div class="hero-logo"><div class="halo"></div><img src="images/logo.png" alt="Logo AP Toiture"></div></div></section>
+<section class="strip"><div class="container strip-in"><div><b>4</b><span>savoir-faire</span></div><div><b>10 ans</b><span>de garantie décennale</span></div><div><b>0 €</b><span>devis gratuit</span></div><div><b>1</b><span>interlocuteur unique</span></div></div></section>
 <section class="section"><div class="container"><div class="head"><p class="eyebrow">Nos métiers</p><h2>Ce que nous faisons</h2></div><div class="grid4">{cards}</div></div></section>
+<section class="section"><div class="container"><div class="head"><p class="eyebrow">Comment ça se passe</p><h2>Votre chantier en 4 étapes</h2></div><div class="steps">{steps}</div></div></section>
 <section class="section alt"><div class="container"><div class="head"><p class="eyebrow">Notre engagement</p><h2>Pourquoi choisir AP Toiture</h2></div><div class="grid2">{whyh}</div></div></section>
 {cta}'''
 
