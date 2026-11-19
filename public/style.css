@@ -158,7 +158,7 @@ code{background:#333;padding:1px 6px;border-radius:3px}
 :root{--r:16px}
 .btn{border-radius:999px}
 .sico{border-radius:12px}
-.scard,.srv-ico,.panel,.form,.shot,.shot .ph,.cta .container,.stat,.lb img{border-radius:var(--r);overflow:hidden}
+.scard,.srv-ico,.panel,.form,.shot,.shot .ph,.stat,.lb img{border-radius:var(--r);overflow:hidden}
 .shot-img,.shot-img img{border-radius:0}
 .form input,.form select,.form textarea{border-radius:10px}
 .hero-logo img{border-radius:20px}
